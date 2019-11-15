@@ -180,3 +180,19 @@ func (p *Port) Flush() error {
 func (p *Port) Close() (err error) {
 	return p.f.Close()
 }
+
+func (p *Port) Peek() (n uintptr, err error) {
+	if _, _, errno := unix.Syscall6(
+		unix.SYS_IOCTL,
+		uintptr(p.f.Fd()),
+		uintptr(unix.TIOCINQ),
+		uintptr(unsafe.Pointer(&n)),
+		0,
+		0,
+		0,
+	); errno != 0 {
+		return 0, errno
+	}
+
+	return n, nil
+}
