@@ -47,7 +47,7 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 		0,
 		nil,
 		syscall.OPEN_EXISTING,
-		syscall.FILE_ATTRIBUTE_NORMAL|syscall.FILE_FLAG_OVERLAPPED,
+		syscall.FILE_ATTRIBUTE_NORMAL,//|syscall.FILE_FLAG_OVERLAPPED,
 		0)
 	if err != nil {
 		return nil, err
