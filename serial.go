@@ -57,6 +57,7 @@ package serial
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
