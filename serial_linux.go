@@ -110,6 +110,11 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 	t.Cc[unix.VMIN] = vmin
 	t.Cc[unix.VTIME] = vtime
 
+	jgwt, jgwe := unix.IoctlGetTermios(fd, unix.TCGETS)
+	if jgwe != nil {
+	   	fmt.Printf("JGW err ioctl")
+	}
+	fmt.Printf("JGW vmin=%d vtime=%d canon=%d\n", vmin, vtime, jgwt.Lflag)
 	if _, _, errno := unix.Syscall6(
 		unix.SYS_IOCTL,
 		uintptr(fd),
