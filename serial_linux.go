@@ -145,7 +145,10 @@ type Port struct {
 }
 
 func (p *Port) Read(b []byte) (n int, err error) {
-	return p.f.Read(b)
+	fmt.Printf("READ")
+	n, err = p.f.Read(b)
+	fmt.Printf("DONE")
+	return n, err
 }
 
 func (p *Port) Write(b []byte) (n int, err error) {
