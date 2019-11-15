@@ -9,6 +9,9 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/unix"
+
+	"syscall"
+	"github.com/pkg/term/termios"
 )
 
 func openPort(name string, baud int, databits byte, parity Parity, stopbits StopBits, readTimeout time.Duration) (p *Port, err error) {
@@ -110,7 +113,8 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 	t.Cc[unix.VMIN] = vmin
 	t.Cc[unix.VTIME] = vtime
 
-	jgwt, jgwe := unix.IoctlGetTermios(fd, unix.TCGETS)
+	var jgwt syscall.Termios
+	jgwe := termios.Tcgetattr(fd, &jgwt)
 	if jgwe != nil {
 	   	fmt.Printf("JGW err ioctl")
 	}
