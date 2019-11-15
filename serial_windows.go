@@ -257,6 +257,7 @@ func setCommTimeouts(h syscall.Handle, readTimeout time.Duration) error {
 	timeouts.ReadIntervalTimeout = MAXDWORD
 	timeouts.ReadTotalTimeoutMultiplier = MAXDWORD
 	timeouts.ReadTotalTimeoutConstant = uint32(timeoutMs)
+	fmt.Printf("Serial port timeouts RIT=%d RTTM=%d RTTC=%d\n", ReadIntervalTimeout, ReadTotalTimeoutMultiplier, ReadTotalTimeoutConstant)
 
 	r, _, err := syscall.Syscall(nSetCommTimeouts, 2, uintptr(h), uintptr(unsafe.Pointer(&timeouts)), 0)
 	if r == 0 {
