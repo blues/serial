@@ -38,6 +38,7 @@ type structTimeouts struct {
 }
 
 func openPort(name string, baud int, databits byte, parity Parity, stopbits StopBits, readTimeout time.Duration) (p *Port, err error) {
+	fmt.Printf("JGW inside serial.openPort in serial_windows.go\n")
 	if len(name) > 0 && name[0] != '\\' {
 		name = "\\\\.\\" + name
 	}
@@ -216,6 +217,7 @@ func setCommState(h syscall.Handle, baud int, databits byte, parity Parity, stop
 }
 
 func setCommTimeouts(h syscall.Handle, readTimeout time.Duration) error {
+	fmt.Printf("JGW inside serial.setCommTimeouts in serial_windows.go\n")
 	var timeouts structTimeouts
 	const MAXDWORD = 1<<32 - 1
 

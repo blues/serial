@@ -126,6 +126,7 @@ var ErrBadParity error = errors.New("unsupported parity setting")
 
 // OpenPort opens a serial port with the specified configuration
 func OpenPort(c *Config) (*Port, error) {
+	fmt.Printf("JGW inside serial.OpenPort\n")
 	size, par, stop := c.Size, c.Parity, c.StopBits
 	if size == 0 {
 		size = DefaultSize
