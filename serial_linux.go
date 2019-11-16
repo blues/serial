@@ -9,13 +9,9 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/unix"
-
-	"syscall"
-	"github.com/pkg/term/termios"
 )
 
 func openPort(name string, baud int, databits byte, parity Parity, stopbits StopBits, readTimeout time.Duration) (p *Port, err error) {
-	fmt.Printf("JGW inside serial.openPort in serial_linux.go\n")
 	var bauds = map[int]uint32{
 		50:      unix.B50,
 		75:      unix.B75,
@@ -113,12 +109,6 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 	t.Cc[unix.VMIN] = vmin
 	t.Cc[unix.VTIME] = vtime
 
-	var jgwt syscall.Termios
-	jgwe := termios.Tcgetattr(fd, &jgwt)
-	if jgwe != nil {
-	   	fmt.Printf("JGW err ioctl")
-	}
-	fmt.Printf("JGW vmin=%d vtime=%d canon=%d\n", vmin, vtime, jgwt.Lflag)
 	if _, _, errno := unix.Syscall6(
 		unix.SYS_IOCTL,
 		uintptr(fd),
@@ -131,12 +121,7 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 		return nil, errno
 	}
 
-/*
 	if err = unix.SetNonblock(int(fd), false); err != nil {
-		return
-	}
-*/
-	if err = unix.SetNonblock(int(fd), true); err != nil {
 		return
 	}
 
@@ -150,10 +135,7 @@ type Port struct {
 }
 
 func (p *Port) Read(b []byte) (n int, err error) {
-	fmt.Printf("READ")
-	n, err = p.f.Read(b)
-	fmt.Printf("DONE")
-	return n, err
+	return p.f.Read(b)
 }
 
 func (p *Port) Write(b []byte) (n int, err error) {

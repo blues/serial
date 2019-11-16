@@ -38,7 +38,6 @@ type structTimeouts struct {
 }
 
 func openPort(name string, baud int, databits byte, parity Parity, stopbits StopBits, readTimeout time.Duration) (p *Port, err error) {
-	fmt.Printf("JGW inside serial.openPort in serial_windows.go\n")
 	if len(name) > 0 && name[0] != '\\' {
 		name = "\\\\.\\" + name
 	}
@@ -48,7 +47,7 @@ func openPort(name string, baud int, databits byte, parity Parity, stopbits Stop
 		0,
 		nil,
 		syscall.OPEN_EXISTING,
-		syscall.FILE_ATTRIBUTE_NORMAL,//|syscall.FILE_FLAG_OVERLAPPED,
+		syscall.FILE_ATTRIBUTE_NORMAL|syscall.FILE_FLAG_OVERLAPPED,
 		0)
 	if err != nil {
 		return nil, err
@@ -217,7 +216,6 @@ func setCommState(h syscall.Handle, baud int, databits byte, parity Parity, stop
 }
 
 func setCommTimeouts(h syscall.Handle, readTimeout time.Duration) error {
-	fmt.Printf("JGW inside serial.setCommTimeouts in serial_windows.go\n")
 	var timeouts structTimeouts
 	const MAXDWORD = 1<<32 - 1
 
@@ -259,7 +257,6 @@ func setCommTimeouts(h syscall.Handle, readTimeout time.Duration) error {
 	timeouts.ReadIntervalTimeout = MAXDWORD
 	timeouts.ReadTotalTimeoutMultiplier = MAXDWORD
 	timeouts.ReadTotalTimeoutConstant = uint32(timeoutMs)
-	fmt.Printf("Serial port timeouts RIT=%d RTTM=%d RTTC=%d\n", ReadIntervalTimeout, ReadTotalTimeoutMultiplier, ReadTotalTimeoutConstant)
 
 	r, _, err := syscall.Syscall(nSetCommTimeouts, 2, uintptr(h), uintptr(unsafe.Pointer(&timeouts)), 0)
 	if r == 0 {
