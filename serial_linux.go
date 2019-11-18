@@ -134,13 +134,29 @@ type Port struct {
 	f *os.File
 }
 
+func peek() (n uintptr, err error) {
+	if _, _, errno := unix.Syscall6(
+		unix.SYS_IOCTL,
+		uintptr(p.f.Fd()),
+		uintptr(unix.TIOCINQ),
+		uintptr(unsafe.Pointer(&n)),
+		0,
+		0,
+		0,
+	); errno != 0 {
+		return 0, errno
+	}
+
+	return n, nil
+}
+
 func (p *Port) Read(b []byte) (n int, err error) {
 	n, err = peek()
 	if err != nil {
 		return 0, err
 	}
 	if n == 0 {
-		return 0, fmt.Error("EWOULDBLOCK")
+		return 0, nil
 	}
 	return p.f.Read(b)
 }
@@ -168,20 +184,4 @@ func (p *Port) Flush() error {
 
 func (p *Port) Close() (err error) {
 	return p.f.Close()
-}
-
-func (p *Port) peek() (n uintptr, err error) {
-	if _, _, errno := unix.Syscall6(
-		unix.SYS_IOCTL,
-		uintptr(p.f.Fd()),
-		uintptr(unix.TIOCINQ),
-		uintptr(unsafe.Pointer(&n)),
-		0,
-		0,
-		0,
-	); errno != 0 {
-		return 0, errno
-	}
-
-	return n, nil
 }
