@@ -134,12 +134,12 @@ type Port struct {
 	f *os.File
 }
 
-func peek() (n uintptr, err error) {
+func peek(fd uintptr) (bign uintptr, err error) {
 	if _, _, errno := unix.Syscall6(
 		unix.SYS_IOCTL,
-		uintptr(p.f.Fd()),
+		fd,
 		uintptr(unix.TIOCINQ),
-		uintptr(unsafe.Pointer(&n)),
+		uintptr(unsafe.Pointer(&bign)),
 		0,
 		0,
 		0,
@@ -151,7 +151,8 @@ func peek() (n uintptr, err error) {
 }
 
 func (p *Port) Read(b []byte) (n int, err error) {
-	n, err = peek()
+	bign, err := peek(p.F.Fd())
+	n = int(bign)
 	if err != nil {
 		return 0, err
 	}
