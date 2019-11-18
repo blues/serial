@@ -135,6 +135,13 @@ type Port struct {
 }
 
 func (p *Port) Read(b []byte) (n int, err error) {
+	n, err = peek()
+	if err != nil {
+		return 0, err
+	}
+	if n == 0 {
+		return 0, fmt.Error("EWOULDBLOCK")
+	}
 	return p.f.Read(b)
 }
 
@@ -163,7 +170,7 @@ func (p *Port) Close() (err error) {
 	return p.f.Close()
 }
 
-func (p *Port) Peek() (n uintptr, err error) {
+func (p *Port) peek() (n uintptr, err error) {
 	if _, _, errno := unix.Syscall6(
 		unix.SYS_IOCTL,
 		uintptr(p.f.Fd()),
