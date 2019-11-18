@@ -147,11 +147,11 @@ func peek(fd uintptr) (bign uintptr, err error) {
 		return 0, errno
 	}
 
-	return n, nil
+	return bign, nil
 }
 
 func (p *Port) Read(b []byte) (n int, err error) {
-	bign, err := peek(p.F.Fd())
+	bign, err := peek(p.f.Fd())
 	n = int(bign)
 	if err != nil {
 		return 0, err
